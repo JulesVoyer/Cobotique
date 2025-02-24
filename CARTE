@@ -1,0 +1,64 @@
+from djitellopy import Tello
+import time
+import matplotlib.pyplot as plt
+
+def move_and_log(tello, movement, distance, pos):
+    """
+    Effectue un mouvement et met à jour la position.
+    """
+    if movement == "forward":
+        tello.move_forward(distance)
+        pos[1] += distance
+    elif movement == "backward":
+        tello.move_back(distance)
+        pos[1] -= distance
+    elif movement == "left":
+        tello.move_left(distance)
+        pos[0] -= distance
+    elif movement == "right":
+        tello.move_right(distance)
+        pos[0] += distance
+    elif movement == "up":
+        tello.move_up(distance)
+        pos[2] += distance
+    elif movement == "down":
+        tello.move_down(distance)
+        pos[2] -= distance
+
+    positions.append(tuple(pos))  # Enregistre la position
+
+if __name__ == "__main__":
+    tello = Tello()
+    tello.connect()
+    tello.takeoff()
+
+    pos = [0, 0, 0]  # Position initiale (x, y, z)
+    positions = [tuple(pos)]
+
+    tello.move_up(10)
+    pos[2] += 10
+    positions.append(tuple(pos))
+
+    # Déplacement en grille 2x2 pour la cartographie
+    move_and_log(tello, "forward", 10, pos)
+    move_and_log(tello, "right", 10, pos)
+    move_and_log(tello, "backward", 10, pos)
+    move_and_log(tello, "left", 10, pos)
+
+    # Descente et atterrissage
+    tello.move_down(10)
+    pos[2] -= 10
+    positions.append(tuple(pos))
+
+    tello.land()
+
+    # Tracé de la cartographie
+    x_vals = [p[0] for p in positions]
+    y_vals = [p[1] for p in positions]
+    plt.plot(x_vals, y_vals, marker="o", linestyle="-", label="Trajectoire du drone")
+    plt.xlabel("X (cm)")
+    plt.ylabel("Y (cm)")
+    plt.title("Cartographie du déplacement du drone")
+    plt.legend()
+    plt.grid()
+    plt.show()
