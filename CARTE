@@ -79,7 +79,7 @@ def center_qr_code(tello: Tello):
     pos_y_max = 100
     pos_z_min = -100
     pos_z_max = 100
-    
+
 
     while abs(relative_y) > 20 | abs(relative_z) > 20:
         if relative_y > 0:
@@ -93,8 +93,8 @@ def center_qr_code(tello: Tello):
             pos_z_max = pos_z
         next_pos_y = (pos_y_min + pos_y_max) // 2
         next_pos_z = (pos_z_min + pos_z_max) // 2
-        tello.move_right(next_pos_y-pos_y)
-        tello.move_up(next_pos_z-pos_z)
+        move_and_log(tello, "forward", next_pos_y - pos_y, pos)
+        move_and_log(tello, "right", next_pos_z - pos_z, pos)
         pos_y = next_pos_y
         pos_z = next_pos_z
         relative_y, relative_z = get_qr_code_relative_position(tello)
@@ -114,19 +114,40 @@ if __name__ == "__main__":
     pos = [0, 0, 0]  # Position initiale (x, y, z)
     positions = [tuple(pos)]
 
-    tello.move_up(10)
-    pos[2] += 10
-    positions.append(tuple(pos))
+    # tello.move_up(10)
+    # pos[2] += 10
+    # positions.append(tuple(pos))
 
-    # Déplacement en grille 2x2 pour la cartographie
-    move_and_log(tello, "forward", 10, pos)
-    move_and_log(tello, "right", 10, pos)
-    move_and_log(tello, "backward", 10, pos)
-    move_and_log(tello, "left", 10, pos)
+    # # Déplacement en grille 2x2 pour la cartographie
+    # move_and_log(tello, "forward", 10, pos)
+    # move_and_log(tello, "right", 10, pos)
+    # move_and_log(tello, "backward", 10, pos)
+    # move_and_log(tello, "left", 10, pos)
+
+    # tello.move_down(10)
+    # pos[2] -= 10
+
+    # recherche du QR code
+    while not qr_code_detected(tello) and tello.get_height()<250:
+        angle = 0
+        while not qr_code_detected(tello) and angle < 360:
+            tello.rotate_counter_clockwise(30)
+            time.sleep(1)
+        
+        tello.move_up(20)
+        time.sleep(1)
+    
+    center_qr_code(tello)   
+    # ON donne l'altitude
+
+    print("QR Code détecté")
+    print("Position relative du QR Code par rapport au drone : ", get_qr_code_relative_position(tello))
+    print("Altitude du drone : ", tello.get_height())
+
+    
 
     # Descente et atterrissage
-    tello.move_down(10)
-    pos[2] -= 10
+
     positions.append(tuple(pos))
 
     tello.land()
