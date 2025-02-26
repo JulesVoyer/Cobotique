@@ -2,10 +2,27 @@ from djitellopy import Tello
 import time
 import matplotlib.pyplot as plt
 
-def move_and_log(tello, movement, distance, pos):
+def move_and_log(tello : Tello, movement : str , distance : float, pos : tuple[float,float]):
+
     """
-    Effectue un mouvement et met à jour la position.
+    Fait bouger le drone et sauvegarde sa position dans la liste positions.
+
+    Parameters
+    ----------
+    tello : Tello
+        Le drone
+    movement : str
+        Le mouvement a faire (forward, backward, left, right, up, down)
+    distance : float
+        La distance a parcourir
+    pos : tuple[float,float]
+        La position actuelle du drone
+
+    Returns
+    -------
+    None
     """
+
     if movement == "forward":
         tello.move_forward(distance)
         pos[1] += distance
@@ -26,6 +43,49 @@ def move_and_log(tello, movement, distance, pos):
         pos[2] -= distance
 
     positions.append(tuple(pos))  # Enregistre la position
+
+
+def move_to_and_log (tello : Tello, x : float, y : float,  pos : tuple[float,float]):
+
+    
+    
+
+    """
+    Fait bouger le drone pour qu'il arrive a la position (x,y) et sauvegarde sa position dans la liste positions.
+
+    Parameters
+    ----------
+    tello : Tello
+        Le drone
+    x : float
+        la nouvelle abscisse
+    y : float
+        la nouvelle ordonnee
+    pos : tuple[float,float]
+        La position actuelle du drone
+
+    Returns
+    -------
+    None
+    """
+    dx = x - pos[0]
+    dy = y - pos[1]
+
+    if dx > 0:
+        tello.move_right(dx)
+    else:
+        tello.move_left(-dx)
+    pos[0] = x
+
+    if dy > 0:
+        tello.move_forward(dy)
+    else:
+        tello.move_back(-dy)
+    pos[1] = y
+
+    positions.append(tuple(pos))  # Enregistre la position
+
+  
 
 if __name__ == "__main__":
     tello = Tello()
