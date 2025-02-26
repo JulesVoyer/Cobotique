@@ -95,19 +95,19 @@ if __name__ == "__main__":
     pos = [0, 0, 0]  # Position initiale (x, y, z)
     positions = [tuple(pos)]
 
-    tello.move_up(10)
-    pos[2] += 10
+    tello.move_up(20)
+    pos[2] += 20
     positions.append(tuple(pos))
 
     # Déplacement en grille 2x2 pour la cartographie
-    move_and_log(tello, "forward", 10, pos)
-    move_and_log(tello, "right", 10, pos)
-    move_and_log(tello, "backward", 10, pos)
-    move_and_log(tello, "left", 10, pos)
+    move_and_log(tello, "forward", 20, pos)
+    move_and_log(tello, "right", 20, pos)
+    move_and_log(tello, "backward", 20, pos)
+    move_and_log(tello, "left", 20, pos)
 
     # Descente et atterrissage
-    tello.move_down(10)
-    pos[2] -= 10
+    tello.move_down(20)
+    pos[2] -= 20
     positions.append(tuple(pos))
 
     tello.land()
